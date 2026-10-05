@@ -1,0 +1,234 @@
+# ServiceTracker Plus - Cursor AI Kuralları
+
+## Proje Yapısı Kuralları
+
+### Dizin Yapısı
+```
+src/
+├── components/
+│   ├── common/        # Genel bileşenler
+│   ├── features/      # Özellik bazlı bileşenler
+│   └── layouts/       # Sayfa düzenleri
+├── hooks/             # Custom hooks
+├── pages/            # Sayfa bileşenleri
+├── services/         # API servisleri
+├── store/            # State yönetimi
+├── types/            # Tip tanımlamaları
+└── utils/            # Yardımcı fonksiyonlar
+```
+
+### Dosya İsimlendirme
+```typescript
+// Bileşenler (PascalCase)
+CustomerDetails.tsx
+ServiceHistory.tsx
+
+// Hooklar (camelCase)
+useCustomerData.ts
+useServiceStatus.ts
+
+// Yardımcı fonksiyonlar (camelCase)
+formatDate.ts
+validatePhone.ts
+```
+
+## Kod Stil Kuralları
+
+### TypeScript Kuralları
+```typescript
+// Interface tanımlamaları
+interface CustomerProps {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+}
+
+// Type tanımlamaları
+type ServiceStatus = 'pending' | 'in-progress' | 'completed';
+
+// Generic kullanımı
+const getCustomerData = async <T extends CustomerProps>(id: string): Promise<T> => {
+  // Implementation
+};
+```
+
+### Bileşen Yapısı
+```typescript
+import React from 'react';
+import { useCustomerData } from '@/hooks';
+import { CustomerCard } from '@/components/common';
+
+interface CustomerDetailsProps {
+  customerId: string;
+  onUpdate: (data: CustomerData) => void;
+}
+
+export const CustomerDetails: React.FC<CustomerDetailsProps> = ({
+  customerId,
+  onUpdate,
+}) => {
+  // Implementation
+};
+```
+
+## State Yönetimi
+
+### Redux Store Yapısı
+```typescript
+// store/customer/types.ts
+interface CustomerState {
+  data: Record<string, Customer>;
+  loading: boolean;
+  error: string | null;
+}
+
+// store/customer/slice.ts
+const customerSlice = createSlice({
+  name: 'customer',
+  initialState,
+  reducers: {
+    // Reducers
+  },
+});
+```
+
+### Zustand Store Yapısı
+```typescript
+interface ServiceStore {
+  appointments: Appointment[];
+  addAppointment: (appointment: Appointment) => void;
+  updateStatus: (id: string, status: ServiceStatus) => void;
+}
+
+const useServiceStore = create<ServiceStore>((set) => ({
+  // Store implementation
+}));
+```
+
+## API Entegrasyonu
+
+### React Query Kullanımı
+```typescript
+// hooks/useCustomerQuery.ts
+export const useCustomerQuery = (customerId: string) => {
+  return useQuery(['customer', customerId], () => 
+    fetchCustomerData(customerId), {
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    }
+  );
+};
+```
+
+## Stil Kuralları
+
+### Styled Components
+```typescript
+// styles/CustomerCard.styles.ts
+export const CardContainer = styled.div`
+  display: flex;
+  padding: ${({ theme }) => theme.spacing(2)};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  background-color: ${({ theme }) => theme.colors.background};
+`;
+```
+
+### Tailwind Kullanımı
+```typescript
+// components/common/Button.tsx
+export const Button: React.FC<ButtonProps> = ({ children, variant }) => (
+  <button className={`
+    px-4 py-2 rounded-md
+    ${variant === 'primary' ? 'bg-blue-500 text-white' : 'bg-gray-200'}
+  `}>
+    {children}
+  </button>
+);
+```
+
+## Test Kuralları
+
+### Birim Testler
+```typescript
+// __tests__/CustomerDetails.test.tsx
+describe('CustomerDetails', () => {
+  it('should render customer information', () => {
+    const customer = mockCustomerData();
+    render(<CustomerDetails customer={customer} />);
+    expect(screen.getByText(customer.name)).toBeInTheDocument();
+  });
+});
+```
+
+## Güvenlik Kuralları
+
+### Veri Doğrulama
+```typescript
+// utils/validation.ts
+export const validateCustomerData = (data: unknown): data is Customer => {
+  if (!data || typeof data !== 'object') return false;
+  return (
+    'id' in data &&
+    'name' in data &&
+    'phone' in data
+  );
+};
+```
+
+## Performans Kuralları
+
+### Code Splitting
+```typescript
+// pages/CustomerDashboard.tsx
+const ServiceHistory = React.lazy(() => 
+  import('@/components/features/ServiceHistory')
+);
+
+export const CustomerDashboard: React.FC = () => (
+  <Suspense fallback={<Loading />}>
+    <ServiceHistory />
+  </Suspense>
+);
+```
+
+## Hata Yönetimi
+
+### Error Boundary
+```typescript
+// components/common/ErrorBoundary.tsx
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps> {
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorDisplay error={this.state.error} />;
+    }
+    return this.props.children;
+  }
+}
+```
+
+## Dokümantasyon Kuralları
+
+### JSDoc Kullanımı
+```typescript
+/**
+ * Müşteri servis geçmişini getirir
+ * @param customerId - Müşteri ID
+ * @returns Servis geçmişi listesi
+ * @throws {ApiError} API hatası durumunda
+ */
+export const getServiceHistory = async (
+  customerId: string
+): Promise<ServiceRecord[]> => {
+  // Implementation
+};
+```
+
+## Güncellemeler
+- Versiyon: 1.0
+- Son Güncelleme: 15.03.2024
+- Geliştirici: [Geliştirici Adı] 
